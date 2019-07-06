@@ -1,8 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import Spinner from '../layout/Spinner';
+import PropTypes from  'prop-types';
+import { Link } from 'react-router-dom'
 
 export class User extends Component {
     componentDidMount() {
+        console.log(this.props.match.params.login);
         this.props.getUser(this.props.match.params.login)
+    }
+
+    static propTypes = {
+        loading: PropTypes.bool,
+        user: PropTypes.object.isRequired,
+        getUser: PropTypes.func.isRequired,
     }
 
     render() {
@@ -11,6 +21,7 @@ export class User extends Component {
             avatar_url,
             location,
             bio,
+            company,
             blog,
             login,
             html_url,
@@ -23,9 +34,73 @@ export class User extends Component {
 
         const { loading } = this.props;
 
+        if (loading) return <Spinner />
+
         return (
             <div>
-                {name}
+                <Link to='/' className='btn btn-light'>
+                    Back to Search
+                </Link>
+                Hireable: {'  '}
+                {
+                    hireable
+                    ? <i className='fas fa-check text-success' />
+                    : <i className='fas fa-times-circle text-danger' />
+                }
+                <div className="card grid-2">
+                    <div className="all-center">
+                        <img
+                            src={avatar_url}
+                            alt={name}
+                            className='round-img'
+                            style={{width: '150px'}}
+                        />
+                        <h1> { name } </h1>
+                        { location &&  <p>Location: { location } </p> }
+                        <div>
+                            { bio && (
+                                <Fragment>
+                                    <h3>Bio</h3>
+                                    <p>{bio}</p>
+                                </Fragment>
+                            )}
+                            <a href={html_url}>
+                                visit GitHub profile
+                            </a>
+                            <ul>
+                                <li>
+                                    { login && <Fragment>
+                                        <strong>Username: </strong> {login}
+                                    </Fragment> }
+                                </li>
+                                <li>
+                                    { company && <Fragment>
+                                        <strong>Company: </strong> {company}
+                                    </Fragment> }
+                                </li>
+                                <li>
+                                    { blog && <Fragment>
+                                        <strong>Blog: </strong> {blog}
+                                    </Fragment> }
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div className="card text-center">
+                    <div className="badge badge-primary">
+                        Followers: {followers}
+                    </div>
+                    <div className="badge badge-success">
+                        Following: {following}
+                    </div>
+                    <div className="badge badge-light">
+                        Public Repos: {public_repos}
+                    </div>
+                    <div className="badge badge-dark">
+                        Public GIsts: {public_gists}
+                    </div>
+                </div>
             </div>
         )
     }
